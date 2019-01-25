@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+import shutil     # remove folders
 
 # Parsing arguments
 parser = argparse.ArgumentParser(add_help=True)
@@ -8,8 +9,11 @@ parser.add_argument('-u', help="username")
 parser.add_argument('-p', help="password")
 args = parser.parse_args()
 
-# Changing user directory
-dirname = '../users/{}'.format(args.u)
+if not args.u or not args.p:
+  exit(0)
+
+# Chanding directory to temp
+dirname = '../temp'
 if not os.path.exists(dirname):
   os.makedirs(dirname)
 os.chdir(dirname)
@@ -17,14 +21,14 @@ os.chdir(dirname)
 from instabot import Bot
 
 bot = Bot()
-bot.login(username=args.u, password=args.p)
-user_id = bot.get_user_id_from_username("kirillovmr")
-user_info = bot.get_user_info(user_id)
-# print(user_info['biography'])
+success = bot.login(username=args.u, password=args.p)
 
-result = {
-  'a': True,
-  'b': 'Hey'
-}
+print(json.dumps({
+  'result': success
+}))
 
-print(json.dumps(result))
+# Clear temp folder
+try:
+  shutil.rmtree('../temp')
+except:
+  print('error')

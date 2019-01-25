@@ -9,8 +9,31 @@
   <title>Instabot</title>
 </head>
 <body>
-  <h1>Welcome to instabot</h1>
-  <button onclick="buttonClicked()">Run</button>
+
+<h1>Welcome to instabot</h1>
+
+<form id="add-account-form">
+  <div class="form-row align-items-center">
+    <div class="col-auto">
+      <label class="sr-only" for="username">Username</label>
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
+        </div>
+        <input type="text" class="form-control" id="username" placeholder="Username">
+      </div>
+    </div>
+    <div class="col-auto">
+      <label class="sr-only" for="password">Password</label>
+      <input type="password" class="form-control mb-2" id="password" placeholder="Password">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-2">Add account</button>
+    </div>
+  </div>
+</form>
+  
+
   
   <script src="./js/index.js"></script>
 </body>
