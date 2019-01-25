@@ -44,6 +44,7 @@ class User {
         } 
         catch {
           // Here we can catch all messages printed in console by bot
+
         }
       })
     });
@@ -60,7 +61,7 @@ class User {
           } else if (exitCode === null) {
             console.log(`Script ${script} was terminated`);
 
-            // Handling here
+            // Handling firther actions for manual script terminating here
           }
           this.bots.lile = null;
     
@@ -133,8 +134,8 @@ const user = new User(process.env.USERNAME, process.env.PASSWORD);
 //   console.log(err);
 // })
 
-user.runBot('like');
+// user.runBot('like');
 
-setTimeout(() => {
-  user.stopBot('like');
-}, 2000);
+// setTimeout(() => {
+//   user.stopBot('like');
+// }, 2000);

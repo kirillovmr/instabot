@@ -7,8 +7,8 @@ require('dotenv').config();
 const { runManager, checkAccount } = require('./python');
 const { User } = require('./User');
 
-const publicPath = path.join(__dirname, '../public');
-const port = process.env.PORT || 3000;
+const publicPath = path.join(__dirname, '../client/build');
+const port = process.env.PORT || 4000;
 
 const app = express();
 const server = http.createServer(app);

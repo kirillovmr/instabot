@@ -29,7 +29,7 @@ answer = {
 
 if(success):
   # Getting user info
-  user_id = bot.get_user_id_from_username("kirillovmr")
+  user_id = bot.get_user_id_from_username(args.u)
   user_info = bot.get_user_info(user_id)
   user = {}
 
