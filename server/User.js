@@ -52,7 +52,19 @@ class User {
   runBot(script) {
     switch (script) {
       case 'like':
-        this.bots.like = _startProcess('like')
+        this.bots.like = this._startProcess('like', null, null, () => {
+          const { exitCode } = this.bots[script];
+
+          if(exitCode === 0) {
+            console.log(`Script ${script} was closed.`);
+          } else if (exitCode === null) {
+            console.log(`Script ${script} was terminated`);
+
+            // Handling here
+          }
+          this.bots.lile = null;
+    
+        });
         break;
       default:
         return false;
@@ -60,11 +72,50 @@ class User {
     return true;
   }
 
-  _startProcess(script, args = []) {
+  stopBot(script) {
+    try {
+      this.bots[script].terminate();
+      
+      // Now script is terminated.
+      // Handling further actions in runBot() onClose() function
+
+      return true;
+    }
+    catch(e) {
+      if (e instanceof TypeError) {
+        console.log('There is no running script');
+        return false;
+      } else {
+        console.log('Unable to stop script', e);
+        return false
+      }
+    }
+  }
+
+  _startProcess(script, args, onMessage, onClose, onError) {
+
+    // Handling event functions
+    onMessage = onMessage || function (msg) {
+      console.log(`Bot ${script}:`, msg);
+    }
+    onClose = onClose || function (msg) {
+      console.log(`Bot ${script} was closed.`);
+    }
+    onError = onError || function (e) {
+      // console.log('EXIT WITH NON ZERO', e.exitCode);
+    }
+    if (args === null)
+      args = [];
+
     const _process = new PythonShell(`${script}.py`, {
       scriptPath,
       args: [`-u=${this.username}`, `-p=${this.password}`, ...args]
     });
+
+    _process.on('message', onMessage);
+    _process.on('close', onClose);
+    _process.on('error', onError);
+
     return _process;
   }
 }
@@ -74,10 +125,16 @@ module.exports = {
 }
 
 const user = new User(process.env.USERNAME, process.env.PASSWORD);
-user.checkAccount()
-.then(info => {
-  console.log(info);
-})
-.catch(err => {
-  console.log(err);
-})
+// user.checkAccount()
+// .then(info => {
+//   console.log(info);
+// })
+// .catch(err => {
+//   console.log(err);
+// })
+
+user.runBot('like');
+
+setTimeout(() => {
+  user.stopBot('like');
+}, 2000);
