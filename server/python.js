@@ -1,9 +1,7 @@
 const path = require('path');
 const { PythonShell } = require('python-shell');
-require('dotenv').config();
 
 const scriptPath = path.resolve('./bot/scripts/');
-
 
 function runManager() {
   var options = {
@@ -30,29 +28,6 @@ function runManager() {
   // console.log('Script', script.command);
 }
 
-function checkCredentials(username, password) {
-  return new Promise((resolve, reject) => {
-    const script = new PythonShell('checkCredentials.py', {
-      scriptPath,
-      args: [`-u=${username}`, `-p=${password}`]
-    });
-  
-    script.on('message', message => {
-      try {
-        message = JSON.parse(message);
-        if(message.result) {
-          resolve(true);
-        }
-        else {
-          reject();
-        }
-      } 
-      catch { }
-    })
-  });
-}
-
 module.exports = {
-  runManager,
-  checkCredentials
+  runManager
 }

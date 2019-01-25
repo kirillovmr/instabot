@@ -4,7 +4,8 @@ const express = require('express');
 var bodyParser = require('body-parser')
 require('dotenv').config();
 
-const { runManager, checkCredentials } = require('./python');
+const { runManager, checkAccount } = require('./python');
+const { User } = require('./User');
 
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT || 3000;
@@ -27,9 +28,8 @@ app.get('/', (req, res) => {
   res.sendFile('index.html');
 });
 
-// Add account to database
+// Adds account to database
 app.post('/add', (req, res) => {
-  let response = {};
 
   // Check if user already exists
   if (db.users[req.body.username]) {
@@ -40,13 +40,15 @@ app.post('/add', (req, res) => {
   }
   else {
     // Verify credentials
-    checkCredentials(req.body.username, req.body.password)
-    .then(() => {
+    const user = new User(req.body.username, req.body.password);
+    user.checkAccount()
+    .then(userInfo => {
       // Adding user to database
       db.users[req.body.username] = req.body.password;
 
       res.send({
         success: true,
+        user: userInfo,
         users: db.users
       });
     })

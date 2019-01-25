@@ -23,12 +23,31 @@ from instabot import Bot
 bot = Bot()
 success = bot.login(username=args.u, password=args.p)
 
-print(json.dumps({
+answer = {
   'result': success
-}))
+}
+
+if(success):
+  # Getting user info
+  user_id = bot.get_user_id_from_username("kirillovmr")
+  user_info = bot.get_user_info(user_id)
+  user = {}
+
+  # user['username'] = args.u
+  # user['password'] = args.p
+  user['avatar'] = user_info['hd_profile_pic_versions'][0]['url']
+  user['initial_stats'] = {
+    'followers': user_info['follower_count'],
+    'following': user_info['following_count'],
+    'tags': user_info['usertags_count'],
+    'medias': user_info['media_count']
+  }
+  answer['user'] = user
+
+print(json.dumps(answer))
 
 # Clear temp folder
 try:
   shutil.rmtree('../temp')
 except:
-  print('error')
+  print('Error deleting temp folder.')
