@@ -1,7 +1,8 @@
 const path = require('path');
 const http = require('http');
 const express = require('express');
-var bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
+const cors = require('cors');
 require('dotenv').config();
 
 const { runManager, checkAccount } = require('./python');
@@ -13,6 +14,7 @@ const port = process.env.PORT || 4000;
 const app = express();
 const server = http.createServer(app);
 
+app.use(cors());
 app.use(express.static(publicPath));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -20,12 +22,18 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 const db = {
-  users: {},
-  bots: {}
+  users: {}
 };
 
 app.get('/', (req, res) => {
   res.sendFile('index.html');
+});
+
+app.get('/initial', (req, res) => {
+  res.send({
+    success: true,
+    users: db.users
+  })
 });
 
 // Adds account to database
@@ -44,12 +52,11 @@ app.post('/add', (req, res) => {
     user.checkAccount()
     .then(userInfo => {
       // Adding user to database
-      db.users[req.body.username] = req.body.password;
+      db.users[req.body.username] = userInfo;
 
       res.send({
         success: true,
-        user: userInfo,
-        users: db.users
+        user: userInfo
       });
     })
     .catch(() => {

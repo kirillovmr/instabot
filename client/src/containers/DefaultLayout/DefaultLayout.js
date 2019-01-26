@@ -36,7 +36,7 @@ class DefaultLayout extends Component {
     return (
       <div className="app">
         <AppHeader fixed>
-          <Suspense  fallback={this.loading()}>
+          <Suspense fallback={this.loading()}>
             <DefaultHeader onLogout={e=>this.signOut(e)}/>
           </Suspense>
         </AppHeader>

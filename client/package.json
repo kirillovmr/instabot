@@ -35,7 +35,8 @@
     "react-router-dom": "^4.3.1",
     "react-test-renderer": "^16.7.0",
     "reactstrap": "^7.0.2",
-    "simple-line-icons": "^2.4.1"
+    "simple-line-icons": "^2.4.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "react-scripts": "2.1.3"
