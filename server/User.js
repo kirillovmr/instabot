@@ -15,7 +15,8 @@ class User {
       comment: null
     }
     this.avatar = null;
-    this.initialInfo = null;
+    this.initialStats = null;
+    this.currentStats = null;
   }
 
   // Tries to login into account and returns user info
@@ -33,8 +34,10 @@ class User {
 
             // Storing user detailed info
             this.avatar = message.user.avatar
-            if (this.initialInfo === null)
-              this.initialInfo = message.user.initial_stats;
+            if (this.initialStats === null)
+              this.initialStats = message.user.initial_stats;
+
+            this.currentStats = message.user.current_stats;
 
             resolve(this);
           }

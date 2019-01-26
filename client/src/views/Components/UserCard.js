@@ -1,58 +1,56 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { mapToCssModules } from 'reactstrap/lib/utils';
+import uuidv1 from 'uuid/v1';
 
-const propTypes = {
-  children: PropTypes.node,
-  className: PropTypes.string,
-  cssModule: PropTypes.object,
-  dataBox: PropTypes.func,
-};
+function smile(value) {
+  return <span key={uuidv1()} role="img" aria-label="">{value}</span>
+}
 
-const defaultProps = {
-  dataBox: () => ({ 
-    username: 'kirillovmr',
-    bg: 'https://image.flaticon.com/icons/svg/17/17004.svg',
-    followers: '-'
-  }),
-};
+function textToSmile(text) {
+  switch(text) {
+    case 'like':
+      return '❤️';
+    case 'follow':
+      return '👤';
+    case 'comment':
+      return '💬'
+    default:
+      return '🙄'
+  }
+}
 
-class UserCard extends Component {
+export default class UserCard extends Component {
+
+  renderBots(bots) {
+    let added = 0;
+    const html = Object.keys(bots).map(bot => {
+      if (bots[bot] !== null) {
+        added += 1;
+        return smile(textToSmile(bot));
+      }
+      return '';
+    });
+    if(added === 0)
+      return "none";
+    
+    return html;
+  }
+
   render() {
-
-    // eslint-disable-next-line
-    const { children, className, cssModule, dataBox, ...attributes } = this.props;
-
-    // demo purposes only
-    const data = dataBox();
-
-    const keys = Object.keys(data);
-    const vals = Object.values(data);
-
-    const classCard = 'brand-card';
-    const classCardHeader = classNames(`${classCard}-header`);
-    const classCardBody = classNames(`${classCard}-body`);
-    const classes = mapToCssModules(classNames(classCard, className), cssModule);
-
     return (
-      <div className={classes}>
-        <div className={classCardHeader} style={{background: `url(${vals[1]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }}>
-          <p className="widget-username">@{vals[0]}</p>
-          {children}
+      <div className="brand-card">
+        <div className="brand-card-header" style={{backgroundImage: `url(${this.props.avatar})`}}>
+          <p className="widget-username">@{this.props.username}</p>
+          {this.props.children}
         </div>
-        <div className={classCardBody}>
+        <div className="brand-card-body">
           <div>
-            <div className="text-value">{vals[2]}</div>
-            <div className="text-uppercase text-muted small">{keys[2]}</div>
+            <div className="text-value">{this.props.currentStats.followers}</div>
+            <div className="text-uppercase text-muted small">Followers</div>
+            <hr/>
+            <div className="text-uppercase text-muted small">Running: {this.renderBots(this.props.bots)}</div>
           </div>
         </div>
       </div>
     );
   }
 }
-
-UserCard.propTypes = propTypes;
-UserCard.defaultProps = defaultProps;
-
-export default UserCard;

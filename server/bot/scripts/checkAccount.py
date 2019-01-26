@@ -42,6 +42,7 @@ if(success):
     'tags': user_info['usertags_count'],
     'medias': user_info['media_count']
   }
+  user['current_stats'] = user['initial_stats']
   answer['user'] = user
 
 print(json.dumps(answer))

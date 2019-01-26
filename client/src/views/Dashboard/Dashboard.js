@@ -10,17 +10,12 @@ import {
   Col,
   Progress,
   Row,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
 } from 'reactstrap';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities'
 
 const UserCard = lazy(() => import('../../views/Components/UserCard'));
+const AddUserForm = lazy(() => import('../../views/Components/AddUserForm'));
 
 const brandPrimary = getStyle('--primary')
 const brandSuccess = getStyle('--success')
@@ -177,8 +172,6 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {
-      aUsername: '',
-      aPassword: '',
       API_ROOT: '',
       users: {}
     };
@@ -211,55 +204,29 @@ class Dashboard extends Component {
     .catch( alert );
   }
 
-  // Submit addUser form
-  addAccount(e) {
-    e.preventDefault();
-
-    if (!this.state.aUsername || !this.state.aPassword)
-      return;
-
-    console.log('Checking account...');
-    
-    const body = {
-      username: this.state.aUsername, 
-      password: this.state.aPassword
-    };
-
-    fetch(`${this.state.API_ROOT}/add`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+  addUser(user) {
+    this.setState({
+      users: {
+        ...this.state.users,
+        [user.username]: user
       },
-      body: JSON.stringify(body)
     })
-    .then(response => response.json())
-    .then(result => {
-      console.log('Add acc:', result);
-      if (!result.success) {
-        return;
-      }
-
-      // Adding new user to state
-      this.setState({
-        users: {
-          ...this.state.users,
-          [result.user.username]: result.user
-        },
-        aUsername: '',
-        aPassword: ''
-      });
-    })
-    .catch( alert );
   }
 
   // Returns array of blocks with accounts
   renderAccounts() {
     return Object.keys(this.state.users).map(username => {
+      const user = this.state.users[username];
       return (
         <Col xs="6" sm="6" lg="3" key={uuidv1()}>
           <Suspense fallback={this.loading()}>
-            <UserCard dataBox={() => ({ username, bg: this.state.users[username].avatar, followers: '89k' })} >
+            <UserCard
+              username = {username}
+              avatar = {user.avatar}
+              initialStats = {user.initialStats}
+              currentStats = {user.currentStats}
+              bots = {user.bots}
+            >
               <div className="chart-wrapper">
                 <Line data={makeSocialBoxData(0)} options={socialChartOpts} height={90} />
               </div>
@@ -276,46 +243,10 @@ class Dashboard extends Component {
     return (
       <div className="animated fadeIn">
         <Row>
-          <Col xs="12" sm="12">
-            <Card>
-              <CardHeader>
-                Add new account
-              </CardHeader>
-              <CardBody>
-                <Form onSubmit={this.addAccount.bind(this)} method="post">
-                  <FormGroup>
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText><i className="fa fa-user"></i></InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" id="username1" name="username1" 
-                        placeholder="Username" value={this.state.aUsername}
-                        onChange={(e) => this.setState({
-                          aUsername: e.target.value
-                        })}
-                      />
-                    </InputGroup>
-                  </FormGroup>
-                  <FormGroup>
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText><i className="fa fa-asterisk"></i></InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="password" id="password1" name="password1" 
-                        placeholder="Password" value={this.state.aPassword}
-                        onChange={(e) => this.setState({
-                          aPassword: e.target.value
-                        })}
-                      />
-                    </InputGroup>
-                  </FormGroup>
-                  <FormGroup className="form-actions">
-                    <Button type="submit" size="sm" color="success">Submit</Button>
-                  </FormGroup>
-                </Form>
-              </CardBody>
-            </Card>
-          </Col>
+          <AddUserForm
+            API_ROOT = {this.state.API_ROOT}
+            addUser = {this.addUser.bind(this)}
+          />
         </Row>
 
         <Row>
