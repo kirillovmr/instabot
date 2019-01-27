@@ -1,6 +1,5 @@
-import React, { Component, lazy, Suspense } from 'react';
+import React, { Component, lazy } from 'react';
 import { Line } from 'react-chartjs-2';
-import uuidv1 from 'uuid/v1';
 import {
   Badge,
   Button,
@@ -15,8 +14,8 @@ import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities'
 
 import { getApi, initialFetch } from '../../func/func';
+import { renderUsers } from '../../views/Components/UserCard';
 
-const UserCard = lazy(() => import('../../views/Components/UserCard'));
 const AddUserForm = lazy(() => import('../../views/Components/AddUserForm'));
 
 const brandPrimary = getStyle('--primary')
@@ -24,62 +23,6 @@ const brandSuccess = getStyle('--success')
 const brandWarning = getStyle('--warning')
 const brandDanger = getStyle('--danger')
 
-
-// Social Box Chart
-const socialBoxData = [
-  { data: [65, 59, 84, 84, 51, 55, 40], label: 'facebook' },
-  { data: [1, 13, 9, 17, 34, 41, 38], label: 'twitter' },
-  { data: [78, 81, 80, 45, 34, 12, 40], label: 'linkedin' },
-  { data: [35, 23, 56, 22, 97, 23, 64], label: 'google' },
-];
-
-const makeSocialBoxData = (dataSetNo) => {
-  const dataset = socialBoxData[dataSetNo];
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-      {
-        backgroundColor: 'rgba(255,255,255,.1)',
-        borderColor: 'rgba(255,255,255,.55)',
-        pointHoverBackgroundColor: '#fff',
-        borderWidth: 2,
-        data: dataset.data,
-        label: dataset.label,
-      },
-    ],
-  };
-  return () => data;
-};
-
-const socialChartOpts = {
-  tooltips: {
-    enabled: false,
-    custom: CustomTooltips
-  },
-  responsive: true,
-  maintainAspectRatio: false,
-  legend: {
-    display: false,
-  },
-  scales: {
-    xAxes: [
-      {
-        display: false,
-      }],
-    yAxes: [
-      {
-        display: false,
-      }],
-  },
-  elements: {
-    point: {
-      radius: 0,
-      hitRadius: 10,
-      hoverRadius: 4,
-      hoverBorderWidth: 3,
-    },
-  },
-};
 
 // sparkline charts
 const sparkLineChartData = [
@@ -181,30 +124,6 @@ class Dashboard extends Component {
     })
   }
 
-  // Returns array of blocks with accounts
-  renderAccounts() {
-    return Object.keys(this.state.users).map(username => {
-      const user = this.state.users[username];
-      return (
-        <Col xs="6" sm="6" lg="3" key={uuidv1()}>
-          <Suspense fallback={this.loading()}>
-            <UserCard
-              username = {username}
-              avatar = {user.avatar}
-              initialStats = {user.initialStats}
-              currentStats = {user.currentStats}
-              bots = {user.bots}
-            >
-              <div className="chart-wrapper">
-                <Line data={makeSocialBoxData(0)} options={socialChartOpts} height={90} />
-              </div>
-            </UserCard>
-          </Suspense>
-        </Col>
-      );
-    })
-  }
-
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   render() {
@@ -218,7 +137,7 @@ class Dashboard extends Component {
         </Row>
 
         <Row>
-          {this.renderAccounts()}
+          {renderUsers.call(this, this.state.users)}
         </Row>
 
         <Row>

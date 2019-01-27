@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Row } from 'reactstrap';
 
-import { renderUsers } from '../../views/Components/UserCard';
+import { renderUsers } from '../Components/UserCard';
 
 import { getApi, initialFetch } from '../../func/func';
 
-export default class Accs extends Component {
+export default class Acc extends Component {
   constructor(props) {
     super(props);
 

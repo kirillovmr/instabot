@@ -1,5 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import uuidv1 from 'uuid/v1';
+import { Col } from 'reactstrap';
+import { Line } from 'react-chartjs-2';
+import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 
 function smile(value) {
   return <span key={uuidv1()} role="img" aria-label="">{value}</span>
@@ -16,6 +19,87 @@ function textToSmile(text) {
     default:
       return '🙄'
   }
+}
+
+// Social Box Chart
+const socialBoxData = [
+  { data: [65, 59, 84, 84, 51, 55, 40], label: 'facebook' },
+  { data: [1, 13, 9, 17, 34, 41, 38], label: 'twitter' },
+  { data: [78, 81, 80, 45, 34, 12, 40], label: 'linkedin' },
+  { data: [35, 23, 56, 22, 97, 23, 64], label: 'google' },
+];
+
+const makeSocialBoxData = (dataSetNo) => {
+  const dataset = socialBoxData[dataSetNo];
+  const data = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        backgroundColor: 'rgba(255,255,255,.1)',
+        borderColor: 'rgba(255,255,255,.55)',
+        pointHoverBackgroundColor: '#fff',
+        borderWidth: 2,
+        data: dataset.data,
+        label: dataset.label,
+      },
+    ],
+  };
+  return () => data;
+};
+
+const socialChartOpts = {
+  tooltips: {
+    enabled: false,
+    custom: CustomTooltips
+  },
+  responsive: true,
+  maintainAspectRatio: false,
+  legend: {
+    display: false,
+  },
+  scales: {
+    xAxes: [
+      {
+        display: false,
+      }],
+    yAxes: [
+      {
+        display: false,
+      }],
+  },
+  elements: {
+    point: {
+      radius: 0,
+      hitRadius: 10,
+      hoverRadius: 4,
+      hoverBorderWidth: 3,
+    },
+  },
+};
+
+// Returns array of blocks with accounts
+export function renderUsers(users) {
+  return Object.keys(users).map(username => {
+    const user = users[username];
+    return (
+      <Col xs="6" sm="6" lg="3" key={uuidv1()}>
+        <Suspense fallback={this.loading()}>
+          <UserCard
+            onClick={() => this.props.history.push(`/accs/${username}`)}
+            username = {username}
+            avatar = {user.avatar}
+            initialStats = {user.initialStats}
+            currentStats = {user.currentStats}
+            bots = {user.bots}
+          >
+            <div className="chart-wrapper">
+              <Line data={makeSocialBoxData(0)} options={socialChartOpts} height={90} />
+            </div>
+          </UserCard>
+        </Suspense>
+      </Col>
+    );
+  })
 }
 
 export default class UserCard extends Component {
@@ -37,7 +121,7 @@ export default class UserCard extends Component {
 
   render() {
     return (
-      <div className="brand-card">
+      <div className="brand-card" onClick={this.props.onClick || null}>
         <div className="brand-card-header" style={{backgroundImage: `url(${this.props.avatar})`}}>
           <p className="widget-username">@{this.props.username}</p>
           {this.props.children}
