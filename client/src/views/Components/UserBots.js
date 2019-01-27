@@ -94,7 +94,6 @@ export default class UserBots extends Component {
   }
 
   render() {
-    console.log('Status', this.state.status)
     const { bots } = this.props;
     return (
       <Col xs="12" sm="8" lg="9">

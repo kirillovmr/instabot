@@ -38,20 +38,23 @@ export async function initialFetch() {
 
 // Sets to state user object
 export function fetchUser(username) {
-  fetch(`${getApi()}/user?username=${username}`, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-  })
-  .then(response => response.json())
-  .then(result => {
-    this.setState({
-      ...result
-    });
-  })
-  .catch( alert );
+  return new Promise((resolve, reject) => {
+    fetch(`${getApi()}/user?username=${username}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success)
+        resolve(result);
+      else
+        reject(result);
+    })
+    .catch( alert );
+  });
 }
 
 export function smile(value) {

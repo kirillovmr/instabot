@@ -17,7 +17,15 @@ export default class Acc extends Component {
   }
 
   componentWillMount() {
-    fetchUser.call(this, this.props.match.params.id);
+    fetchUser(this.props.match.params.id)
+    .then(result => {
+      this.setState({
+        user: result.user
+      });
+    })
+    .catch(result => {
+      this.props.history.push('/#');
+    })
   }
 
   // activate (bot run - TRUE / stop - false)

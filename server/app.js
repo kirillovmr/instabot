@@ -82,6 +82,10 @@ app.post('/add', (req, res) => {
   }
 });
 
+app.post('/bots', (req, res) => {
+  console.log(req.body);
+});
+
 server.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 });
