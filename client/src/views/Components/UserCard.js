@@ -82,7 +82,7 @@ export function renderUsers(users) {
   return Object.keys(users).map(username => {
     const user = users[username];
     return (
-      <Col xs="6" sm="6" lg="3" key={uuidv1()}>
+      <Col xs="12" sm="4" lg="3" key={uuidv1()}>
         <Suspense fallback={this.loading()}>
           <UserCard
             onClick={() => this.props.history.push(`/accs/${username}`)}

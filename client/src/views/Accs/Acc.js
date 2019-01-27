@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row } from 'reactstrap';
 
 import { renderUsers } from '../Components/UserCard';
+import UserSettingsTabs from '../Components/UserSettingsTabs';
 
 import { getApi, initialFetch } from '../../func/func';
 
@@ -28,6 +29,8 @@ export default class Acc extends Component {
         <Row>
           {renderUsers.call(this, this.state.users)}
         </Row>
+        
+        <UserSettingsTabs />
       </div>
     )
   }
