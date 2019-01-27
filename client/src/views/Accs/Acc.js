@@ -20,17 +20,39 @@ export default class Acc extends Component {
     fetchUser.call(this, this.props.match.params.id);
   }
 
+  // activate (bot run - TRUE / stop - false)
+  manageBot(bot, activate) {
+    console.log('Action dispatched');
+
+    return new Promise((resolve, reject) => {
+
+      setTimeout(() => {
+        this.setState({
+          user: {
+            ...this.state.user,
+            bots: {
+              ...this.state.user.bots,
+              [bot]: activate ? 123 : null
+            }
+          }
+        });
+        resolve();
+      }, 1500);
+    });
+  }
+
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   render() {
-    console.log(this.state);
     return (
       <div className="animated fadeIn">
         <Row>
-          {/* Todo - fetch and display only specified user*/}
           {this.state.user.username ? renderUsers.call(this, {[this.state.user.username]: this.state.user}, false) : null}
 
-          <UserBots />
+          <UserBots 
+            bots={this.state.user.bots}
+            manageBot={this.manageBot.bind(this)}
+          />
         </Row>
 
         <UserSettingsTabs />

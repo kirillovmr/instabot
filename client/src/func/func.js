@@ -1,3 +1,6 @@
+import React from 'react';
+import uuidv1 from 'uuid/v1';
+
 const LOCAL_API_ROOT = 'http://localhost:4000';
 
 export function getApi() {
@@ -33,6 +36,7 @@ export async function initialFetch() {
   .catch( alert );
 }
 
+// Sets to state user object
 export function fetchUser(username) {
   fetch(`${getApi()}/user?username=${username}`, {
     method: 'GET',
@@ -48,4 +52,23 @@ export function fetchUser(username) {
     });
   })
   .catch( alert );
+}
+
+export function smile(value) {
+  return <span key={uuidv1()} role="img" aria-label="">{value}</span>
+}
+
+export function textToSmile(text) {
+  switch(text) {
+    case 'like':
+      return '❤️';
+    case 'follow':
+      return '👤';
+    case 'comment':
+      return '💬'
+    case 'direct':
+      return '✉️'
+    default:
+      return '🙄'
+  }
 }

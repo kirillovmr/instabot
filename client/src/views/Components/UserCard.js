@@ -4,22 +4,7 @@ import { Col } from 'reactstrap';
 import { Line } from 'react-chartjs-2';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 
-function smile(value) {
-  return <span key={uuidv1()} role="img" aria-label="">{value}</span>
-}
-
-function textToSmile(text) {
-  switch(text) {
-    case 'like':
-      return '❤️';
-    case 'follow':
-      return '👤';
-    case 'comment':
-      return '💬'
-    default:
-      return '🙄'
-  }
-}
+import { smile, textToSmile } from '../../func/func'
 
 // Social Box Chart
 const socialBoxData = [
