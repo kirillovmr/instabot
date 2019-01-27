@@ -78,14 +78,14 @@ const socialChartOpts = {
 };
 
 // Returns array of blocks with accounts
-export function renderUsers(users) {
+export function renderUsers(users, clickable = true) {
   return Object.keys(users).map(username => {
     const user = users[username];
     return (
       <Col xs="12" sm="4" lg="3" key={uuidv1()}>
         <Suspense fallback={this.loading()}>
           <UserCard
-            onClick={() => this.props.history.push(`/accs/${username}`)}
+            onClick={clickable ? () => this.props.history.push(`/accs/${username}`) : null}
             username = {username}
             avatar = {user.avatar}
             initialStats = {user.initialStats}

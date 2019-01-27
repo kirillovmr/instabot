@@ -10,8 +10,10 @@ export function getApi() {
   }
 }
 
-export async function initialFetch(apiRoot) {
-  await fetch(`${apiRoot}/initial`, {
+// Sets to state users object
+// Call with initialFetch.call(this)
+export async function initialFetch() {
+  await fetch(`${getApi()}/initial`, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -24,8 +26,25 @@ export async function initialFetch(apiRoot) {
       return alert("Error making initial fetch");
 
     this.setState({
-      users: result.users,
+      ...result,
       initialDone: true
+    });
+  })
+  .catch( alert );
+}
+
+export function fetchUser(username) {
+  fetch(`${getApi()}/user?username=${username}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(response => response.json())
+  .then(result => {
+    this.setState({
+      ...result
     });
   })
   .catch( alert );

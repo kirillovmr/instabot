@@ -36,6 +36,20 @@ app.get('/initial', (req, res) => {
   })
 });
 
+app.get('/user', (req, res) => {
+  const { username } = req.query;
+  if(db.users[username])
+    res.send({
+      success: true,
+      user: db.users[username]
+    });
+  else
+    res.send({
+      success: false,
+      errorMsg: 'User not found'
+    });
+});
+
 // Adds account to database
 app.post('/add', (req, res) => {
 
