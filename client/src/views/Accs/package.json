@@ -1,0 +1,6 @@
+{
+  "name": "Accs",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Accs.js"
+}

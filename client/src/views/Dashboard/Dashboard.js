@@ -14,6 +14,8 @@ import {
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities'
 
+import { getApi, initialFetch } from '../../func/func';
+
 const UserCard = lazy(() => import('../../views/Components/UserCard'));
 const AddUserForm = lazy(() => import('../../views/Components/AddUserForm'));
 
@@ -156,52 +158,18 @@ const sparklineChartOpts = {
   },
 };
 
-// Local Settings of your app
-const LOCAL_API_ROOT = 'http://localhost:4000';
-
-const selectAPI = origin => {
-  if (origin.includes('localhost')) {
-    return LOCAL_API_ROOT;
-  } else {
-    return origin;
-  }
-}
-
 class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      API_ROOT: '',
-      users: {}
+      users: {},
+      initialDone: false
     };
   }
 
-  componentWillMount() {
-    const apiRoot = selectAPI(window.location.origin);
-    this.setState({ API_ROOT: apiRoot });
-
-    this.fetchInitial(apiRoot);
-  }
-
-  fetchInitial(apiRoot) {
-    fetch(`${apiRoot}/initial`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-    })
-    .then(response => response.json())
-    .then(result => {
-      if (!result.success)
-        return alert("Error making initial fetch");
-
-      this.setState({
-        users: result.users
-      })
-    })
-    .catch( alert );
+  async componentWillMount() {
+    await initialFetch.call(this, getApi());
   }
 
   addUser(user) {
@@ -244,8 +212,8 @@ class Dashboard extends Component {
       <div className="animated fadeIn">
         <Row>
           <AddUserForm
-            API_ROOT = {this.state.API_ROOT}
             addUser = {this.addUser.bind(this)}
+            collapse = {Object.keys(this.state.users).length === 0 && this.state.initialDone ? true : false}
           />
         </Row>
 

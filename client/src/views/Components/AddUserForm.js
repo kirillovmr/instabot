@@ -15,16 +15,25 @@ import {
   InputGroupText,
 } from 'reactstrap';
 
+import { getApi } from '../../func/func';
+
 export default class AddUserForm extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      apiRoot: '',
       username: '',
       password: '',
       loading: false,
-      collapse: true
+      collapse: this.props.collapse === undefined ? true : this.props.collapse
     }
+  }
+
+  componentWillMount() {
+    this.setState({
+      apiRoot: getApi()
+    });
   }
 
   // Submit addUser form
@@ -41,7 +50,7 @@ export default class AddUserForm extends Component {
       password: this.state.password
     };
 
-    fetch(`${this.props.API_ROOT}/add`, {
+    fetch(`${this.state.apiRoot}/add`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
