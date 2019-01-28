@@ -63,6 +63,23 @@ export default class Acc extends Component {
     });
   }
 
+  deleteAccount() {
+    fetch(`${getApi()}/delete`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        username: this.state.user.username
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+      // todo
+      // Catch for success: false
+      this.props.history.push('/#');
+    })
+    .catch( alert );
+  }
+
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   render() {
@@ -77,7 +94,9 @@ export default class Acc extends Component {
           />
         </Row>
 
-        <UserSettingsTabs />
+        <UserSettingsTabs 
+          deleteAccount={this.deleteAccount.bind(this)}
+        />
       </div>
     )
   }

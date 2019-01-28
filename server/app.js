@@ -5,9 +5,9 @@ const bodyParser = require('body-parser')
 const cors = require('cors');
 require('dotenv').config();
 
-const { runManager, checkAccount } = require('./python');
 const { User } = require('./User');
-const { addUserToDB, getUserFromDB, getAllUsersFromDB } = require('./Database');
+const { addUserToDB, deleteUserFromDB, 
+  getUserFromDB, getAllUsersFromDB } = require('./Database');
 
 const publicPath = path.join(__dirname, '../client/build');
 const port = process.env.PORT || 4000;
@@ -22,10 +22,9 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-const db = {
-  users: {},
-  processes: {}
-};
+/**
+ * GET & POST Methods
+ */
 
 app.get('/', (req, res) => {
   res.sendFile('index.html');
@@ -105,6 +104,17 @@ app.post('/bots', (req, res) => {
     msg
   })
 });
+
+// Deletes an account
+app.post('/delete', (req, res) => {
+  const { username } = req.body;
+
+  deleteUserFromDB(username);
+  
+  res.send({
+    success: true
+  });
+})
 
 server.listen(port, () => {
   console.log(`Server is up on port ${port}`);

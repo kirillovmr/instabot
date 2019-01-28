@@ -15,7 +15,7 @@ import {
   InputGroupText,
 } from 'reactstrap';
 
-import { getApi } from '../../func/func';
+import { getApi, getHeaders } from '../../func/func';
 
 export default class AddUserForm extends Component {
   constructor(props) {
@@ -50,12 +50,9 @@ export default class AddUserForm extends Component {
       password: this.state.password
     };
 
-    fetch(`${this.state.apiRoot}/add`, {
+    fetch(`${getApi()}/add`, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers: getHeaders(),
       body: JSON.stringify(body)
     })
     .then(response => response.json())

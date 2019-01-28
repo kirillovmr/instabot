@@ -13,7 +13,8 @@ class User {
     this.bots = {
       like: null,
       follow: null,
-      comment: null
+      comment: null,
+      direct: null
     }
     processes[username] = {...this.bots}
     this.avatar = null;
@@ -139,7 +140,7 @@ module.exports = {
   User
 }
 
-const user = new User(process.env.USERNAME, process.env.PASSWORD);
+// const user = new User(process.env.USERNAME, process.env.PASSWORD);
 // user.checkAccount()
 // .then(info => {
 //   console.log(info);

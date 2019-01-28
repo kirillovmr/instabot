@@ -9,13 +9,22 @@ const db = {
 };
 
 function addUserToDB(user) {
-  if (db.users[user.username]) {
+  if (getUserFromDB(user.username)) {
     console.log(`User ${username} already exists`);
     return false;
   }
 
   db.users[user.username] = user;
   return true;
+}
+
+function deleteUserFromDB(username) {
+  if (getUserFromDB(username)) {
+    delete db.users[username];
+    delete processes[username];
+    return true;
+  }
+  return false;
 }
 
 function getAllUsersFromDB() {
@@ -36,6 +45,7 @@ function getUserFromDB(username) {
 module.exports = {
   processes,
   addUserToDB,
+  deleteUserFromDB,
   getAllUsersFromDB,
   getUserFromDB
 }
