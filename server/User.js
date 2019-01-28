@@ -1,5 +1,6 @@
 const path = require('path');
 const { PythonShell } = require('python-shell');
+const fs = require('fs');
 require('dotenv').config();
 
 const scriptPath = path.resolve('./bot/scripts/');
@@ -53,27 +54,26 @@ class User {
   }
 
   runBot(script) {
-    switch (script) {
-      case 'like':
-        processes[this.username].like = this._startProcess('like', null, null, () => {
-          const { exitCode } = processes[this.username][script];
+    const scriptExists = fs.existsSync(`${scriptPath}/${script}.py`);
 
-          if(exitCode === 0) {
-            console.log(`${this.username}: ${script} was closed`);
-          } else if (exitCode === null) {
-            console.log(`${this.username}: ${script} was terminated`);
+    if(!scriptExists)
+      return false;
 
-            // Handling firther actions for manual script terminating here
-            // todo
-          }
-          processes[this.username].like = null;
-          this.bots.like = null;
-        });
-        this.bots.like = true;
-        break;
-      default:
-        return false;
-    }
+    processes[this.username][script] = this._startProcess(script, null, null, () => {
+      const { exitCode } = processes[this.username][script];
+
+      if(exitCode === 0) {
+        console.log(`${this.username}: ${script} was closed`);
+      } else if (exitCode === null) {
+        console.log(`${this.username}: ${script} was terminated`);
+
+        // Handling firther actions for manual script terminating here
+        // todo
+      }
+      processes[this.username][script] = null;
+      this.bots[script] = null;
+    });
+    this.bots[script] = true;
     return true;
   }
 
