@@ -22,7 +22,6 @@ export default class UserBots extends Component {
   switchPressed(key) {
     // TRUE - switch on || FALSE - off
     const activate = this.props.bots[key] === null ? true : false;
-    console.log('Activate', activate);
 
     // Displaying Pending status
     this.setState({
@@ -39,8 +38,19 @@ export default class UserBots extends Component {
           ...this.state.status,
           [key]: activate ? 'Running' : 'Disabled'
         }
-      })
+      });
     })
+    .catch((msg) => {
+      this.setState({
+        status: {
+          ...this.state.status,
+          [key]: 'Disabled'
+        }
+      });
+
+      // Make an alert that script was not launched because it does not exists
+      // todo
+    });
 
   }
 

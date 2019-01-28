@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const { runManager, checkAccount } = require('./python');
 const { User } = require('./User');
+const { addUserToDB, getUserFromDB, getAllUsersFromDB } = require('./Database');
 
 const publicPath = path.join(__dirname, '../client/build');
 const port = process.env.PORT || 4000;
@@ -22,7 +23,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 const db = {
-  users: {}
+  users: {},
+  processes: {}
 };
 
 app.get('/', (req, res) => {
@@ -32,29 +34,31 @@ app.get('/', (req, res) => {
 app.get('/initial', (req, res) => {
   res.send({
     success: true,
-    users: db.users
+    users: getAllUsersFromDB()
   })
 });
 
 app.get('/user', (req, res) => {
   const { username } = req.query;
-  if(db.users[username])
+  const user = getUserFromDB(username);
+  if(user)
     res.send({
       success: true,
-      user: db.users[username]
+      user
     });
   else
     res.send({
       success: false,
-      errorMsg: 'User not found'
+      errorMsg: 'User was not found'
     });
 });
 
 // Adds account to database
 app.post('/add', (req, res) => {
+  const { username } = req.body;
 
   // Check if user already exists
-  if (db.users[req.body.username]) {
+  if (getUserFromDB(username)) {
     res.send({
       success: false,
       msg: 'Account with that username already exists'
@@ -66,11 +70,11 @@ app.post('/add', (req, res) => {
     user.checkAccount()
     .then(userInfo => {
       // Adding user to database
-      db.users[req.body.username] = userInfo;
+      addUserToDB(user);
 
       res.send({
         success: true,
-        user: userInfo
+        user: user
       });
     })
     .catch(() => {
@@ -83,7 +87,23 @@ app.post('/add', (req, res) => {
 });
 
 app.post('/bots', (req, res) => {
-  console.log(req.body);
+  const { username, bot, activate } = req.body;
+  let success, msg;
+
+  if(activate) {
+    // Start Bot
+    success = getUserFromDB(username).runBot(bot);
+    if (!success)
+      msg = "No such script";
+  }
+  else {
+    // Stop Bot
+    success = getUserFromDB(username).stopBot(bot);
+  }
+  res.send({
+    success,
+    msg
+  })
 });
 
 server.listen(port, () => {

@@ -3,7 +3,7 @@ import json
 
 i = 0
 while(True):
-  if i > 3: 
+  if i > 30: 
     exit(0)
   print(json.dumps('Hey {}'.format(i)))
 

@@ -3,7 +3,7 @@ const { PythonShell } = require('python-shell');
 require('dotenv').config();
 
 const scriptPath = path.resolve('./bot/scripts/');
-
+const { processes } = require('./Database');
 
 class User {
   constructor(username, password) {
@@ -14,6 +14,7 @@ class User {
       follow: null,
       comment: null
     }
+    processes[username] = {...this.bots}
     this.avatar = null;
     this.initialStats = null;
     this.currentStats = null;
@@ -38,7 +39,6 @@ class User {
               this.initialStats = message.user.initial_stats;
 
             this.currentStats = message.user.current_stats;
-
             resolve(this);
           }
           else {
@@ -47,7 +47,6 @@ class User {
         } 
         catch {
           // Here we can catch all messages printed in console by bot
-
         }
       })
     });
@@ -56,19 +55,21 @@ class User {
   runBot(script) {
     switch (script) {
       case 'like':
-        this.bots.like = this._startProcess('like', null, null, () => {
-          const { exitCode } = this.bots[script];
+        processes[this.username].like = this._startProcess('like', null, null, () => {
+          const { exitCode } = processes[this.username][script];
 
           if(exitCode === 0) {
-            console.log(`Script ${script} was closed.`);
+            console.log(`${this.username}: ${script} was closed`);
           } else if (exitCode === null) {
-            console.log(`Script ${script} was terminated`);
+            console.log(`${this.username}: ${script} was terminated`);
 
             // Handling firther actions for manual script terminating here
+            // todo
           }
-          this.bots.lile = null;
-    
+          processes[this.username].like = null;
+          this.bots.like = null;
         });
+        this.bots.like = true;
         break;
       default:
         return false;
@@ -78,11 +79,10 @@ class User {
 
   stopBot(script) {
     try {
-      this.bots[script].terminate();
-      
+      processes[this.username][script].terminate();
+      this.bots[script] = null;
       // Now script is terminated.
       // Handling further actions in runBot() onClose() function
-
       return true;
     }
     catch(e) {
@@ -100,10 +100,10 @@ class User {
 
     // Handling event functions
     onMessage = onMessage || function (msg) {
-      console.log(`Bot ${script}:`, msg);
+      console.log(`Log ${this.username} ${script}:`, msg);
     }
     onClose = onClose || function (msg) {
-      console.log(`Bot ${script} was closed.`);
+      console.log(`${this.username}: ${script} was closed`);
     }
     onError = onError || function (e) {
       // console.log('EXIT WITH NON ZERO', e.exitCode);
@@ -116,11 +116,22 @@ class User {
       args: [`-u=${this.username}`, `-p=${this.password}`, ...args]
     });
 
+    console.log(`${this.username}: ${script} was started`);
+
     _process.on('message', onMessage);
     _process.on('close', onClose);
     _process.on('error', onError);
 
     return _process;
+  }
+
+  botsToBool() {
+    const bots = {...this.bots};
+    Object.keys(bots).forEach(key => {
+      if(bots[key] !== null)
+        bots[key] = true;
+    });
+    return bots;
   }
 }
 

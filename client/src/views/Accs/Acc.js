@@ -5,7 +5,7 @@ import { renderUsers } from '../Components/UserCard';
 import UserSettingsTabs from '../Components/UserSettingsTabs';
 import UserBots from '../Components/UserBots';
 
-import { fetchUser } from '../../func/func';
+import { fetchUser, getApi, getHeaders } from '../../func/func';
 
 export default class Acc extends Component {
   constructor(props) {
@@ -30,22 +30,36 @@ export default class Acc extends Component {
 
   // activate (bot run - TRUE / stop - false)
   manageBot(bot, activate) {
-    console.log('Action dispatched');
 
     return new Promise((resolve, reject) => {
-
-      setTimeout(() => {
-        this.setState({
-          user: {
-            ...this.state.user,
-            bots: {
-              ...this.state.user.bots,
-              [bot]: activate ? 123 : null
+      fetch(`${getApi()}/bots`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          username: this.state.user.username,
+          bot,
+          activate
+        })
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          this.setState({
+            user: {
+              ...this.state.user,
+              bots: {
+                ...this.state.user.bots,
+                [bot]: activate ? true : null
+              }
             }
-          }
-        });
+          });
+        }
+        else {
+          reject(result.msg);
+        }
         resolve();
-      }, 1500);
+      })
+      .catch(error => alert(error));
     });
   }
 
